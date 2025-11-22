@@ -23,6 +23,7 @@ import heartbeat
 import idb
 from utils import current_ip
 from typing import Union
+from freeport import freeport
 
 idevices = {}
 hbc = None
@@ -198,6 +199,9 @@ async def _device_callback(d: idb.WDADevice,
         })
     elif status == wd.status_ready:
         logger.debug("%s %s", d, "healthcheck passed")
+        
+        # 强制使用基于UDID的固定端口
+        d._wda_proxy_port = freeport.get(f"proxy_{d.udid}")
 
         assert isinstance(info, dict)
         info = defaultdict(dict, info)
